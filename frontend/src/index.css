@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Sunset light — warm cream bg, coral primary, dusky-rose accent */
+    --background: 30 50% 97%;
+    --foreground: 20 25% 15%;
+
+    --card: 30 50% 99%;
+    --card-foreground: 20 25% 15%;
+
+    --popover: 30 50% 99%;
+    --popover-foreground: 20 25% 15%;
+
+    --primary: 20 90% 55%;
+    --primary-foreground: 30 50% 99%;
+
+    --secondary: 30 30% 92%;
+    --secondary-foreground: 20 25% 20%;
+
+    --muted: 30 30% 94%;
+    --muted-foreground: 20 15% 40%;
+
+    --accent: 340 60% 90%;
+    --accent-foreground: 340 60% 30%;
+
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 30 50% 99%;
+
+    --border: 30 25% 88%;
+    --input: 30 25% 88%;
+    --ring: 20 90% 55%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Sunset dark — deep warm-plum bg, coral primary, golden accents */
+    --background: 280 25% 8%;
+    --foreground: 30 40% 92%;
+
+    --card: 280 25% 12%;
+    --card-foreground: 30 40% 92%;
+
+    --popover: 280 25% 12%;
+    --popover-foreground: 30 40% 92%;
+
+    --primary: 20 90% 60%;
+    --primary-foreground: 280 25% 10%;
+
+    --secondary: 280 20% 18%;
+    --secondary-foreground: 30 40% 92%;
+
+    --muted: 280 20% 18%;
+    --muted-foreground: 30 20% 65%;
+
+    --accent: 340 50% 30%;
+    --accent-foreground: 30 40% 92%;
+
+    --destructive: 0 65% 50%;
+    --destructive-foreground: 30 40% 92%;
+
+    --border: 280 20% 22%;
+    --input: 280 20% 22%;
+    --ring: 20 90% 60%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

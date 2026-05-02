@@ -1,0 +1,25 @@
+app = 'tally-frontend'
+primary_region = 'lhr'
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[build.args]
+  VITE_API_BASE_URL = "https://tally-backend.fly.dev"
+  VITE_SUPABASE_URL = "https://aagdtgsmjpmiqtdbdquj.supabase.co"
+  VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_W71WGneUji2Z2iQmL141AA_5PrrbrcR"
+  VITE_AUTH_COOKIE_DOMAIN = ".samrford.com"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'stop'
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ['app']
+
+[[vm]]
+  memory = '256mb'
+  cpu_kind = 'shared'
+  cpus = 1
+  memory_mb = 256
