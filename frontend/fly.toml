@@ -5,7 +5,7 @@ primary_region = 'lhr'
   dockerfile = 'Dockerfile'
 
 [build.args]
-  VITE_API_BASE_URL = "https://tally-backend.fly.dev"
+  VITE_API_BASE_URL = "https://api.tally.samford.uk"
   VITE_SUPABASE_URL = "https://aagdtgsmjpmiqtdbdquj.supabase.co"
   VITE_SUPABASE_PUBLISHABLE_KEY = "sb_publishable_W71WGneUji2Z2iQmL141AA_5PrrbrcR"
   VITE_AUTH_COOKIE_DOMAIN = ".samford.uk"
