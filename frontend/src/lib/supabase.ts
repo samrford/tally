@@ -9,7 +9,7 @@ if (!url || !key) {
 }
 
 // Cross-app session sharing: when VITE_AUTH_COOKIE_DOMAIN is set (e.g.
-// ".samrford.com") AND the current host falls under that domain, store the
+// ".samford.uk") AND the current host falls under that domain, store the
 // Supabase session in a cookie scoped to the parent domain so sibling apps
 // read the same session. Otherwise (env unset, localhost, *.fly.dev) we
 // omit `storage` and Supabase falls back to its default localStorage,
