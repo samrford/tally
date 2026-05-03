@@ -1,60 +1,103 @@
-import { createFileRoute, redirect, useNavigate } from '@tanstack/react-router'
-import { LogOut } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card'
+  ArrowDownCircle,
+  ArrowUpCircle,
+  LogOut,
+  PiggyBank,
+  Wallet,
+} from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { useAuth } from '@/lib/auth'
+import { useKeystore } from '@/lib/keystore'
+import { requireUnlocked } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: ({ context }) => {
-    if (!context.auth.user) {
-      throw redirect({ to: '/login' })
-    }
-  },
-  component: HomePage,
+  beforeLoad: ({ context }) => requireUnlocked(context),
+  component: DashboardPage,
 })
 
-function HomePage() {
+function DashboardPage() {
   const { user, signOut } = useAuth()
+  const { clearDek } = useKeystore()
   const navigate = useNavigate()
 
   const handleSignOut = async () => {
+    clearDek()
     await signOut()
     navigate({ to: '/login' })
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen p-4 relative overflow-hidden">
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/30 rounded-full blur-[150px] pointer-events-none" />
+      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/20 rounded-full blur-[150px] pointer-events-none" />
 
-      <div className="absolute top-4 right-4 z-10">
-        <ThemeToggle />
+      <div className="max-w-5xl mx-auto space-y-8 relative">
+        <header className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold">Tally</h1>
+            <p className="text-sm text-muted-foreground">
+              Signed in as {user?.email}
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <ThemeToggle />
+            <Button variant="ghost" size="sm" onClick={handleSignOut}>
+              <LogOut className="mr-2 h-4 w-4" />
+              Sign out
+            </Button>
+          </div>
+        </header>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Link to="/outgoings" className="block group">
+            <Card className="h-full transition-all group-hover:border-primary/50 group-hover:shadow-lg cursor-pointer">
+              <CardContent className="pt-6 space-y-2">
+                <div className="text-primary">
+                  <ArrowUpCircle className="h-8 w-8" />
+                </div>
+                <h3 className="text-xl font-semibold">Outgoings</h3>
+                <p className="text-sm text-muted-foreground">
+                  Track what you spend
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <ComingSoonCard
+            icon={<ArrowDownCircle className="h-8 w-8" />}
+            title="Income"
+          />
+          <ComingSoonCard
+            icon={<PiggyBank className="h-8 w-8" />}
+            title="Savings"
+          />
+          <ComingSoonCard
+            icon={<Wallet className="h-8 w-8" />}
+            title="Pension"
+          />
+        </div>
       </div>
-
-      <Card className="w-full max-w-md relative z-10">
-        <CardHeader>
-          <CardTitle>Hello, {user?.email}</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground mb-4">
-            Welcome to Tally. There's nothing here yet — but soon there will be.
-          </p>
-          <Button
-            variant="outline"
-            onClick={handleSignOut}
-            className="w-full"
-          >
-            <LogOut className="mr-2 h-4 w-4" />
-            Sign out
-          </Button>
-        </CardContent>
-      </Card>
     </div>
+  )
+}
+
+function ComingSoonCard({
+  icon,
+  title,
+}: {
+  icon: React.ReactNode
+  title: string
+}) {
+  return (
+    <Card className="h-full opacity-50">
+      <CardContent className="pt-6 space-y-2">
+        <div className="text-muted-foreground">{icon}</div>
+        <h3 className="text-xl font-semibold">{title}</h3>
+        <p className="text-sm text-muted-foreground">Coming soon</p>
+      </CardContent>
+    </Card>
   )
 }
