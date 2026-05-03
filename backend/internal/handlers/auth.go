@@ -2,11 +2,14 @@ package handlers
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"net/http"
 	"strings"
 
 	"github.com/coreos/go-oidc/v3/oidc"
+
+	"tally/backend/internal/data"
 )
 
 type contextKey string
@@ -40,8 +43,10 @@ type IDTokenVerifier interface {
 	Verify(ctx context.Context, rawIDToken string) (*oidc.IDToken, error)
 }
 
-// AuthMiddleware verifies the JWT and stores user_id + email in context.
-func AuthMiddleware(verifier IDTokenVerifier, next http.HandlerFunc) http.HandlerFunc {
+// AuthMiddleware verifies the JWT, upserts the local users row (so other
+// tables with FKs to users are safe to write), and stores user_id + email in
+// context.
+func AuthMiddleware(verifier IDTokenVerifier, db *sql.DB, next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		authHeader := r.Header.Get("Authorization")
 		if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
@@ -68,6 +73,12 @@ func AuthMiddleware(verifier IDTokenVerifier, next http.HandlerFunc) http.Handle
 			Email string `json:"email"`
 		}
 		_ = idToken.Claims(&claims)
+
+		if err := data.UpsertUser(r.Context(), db, sub, claims.Email); err != nil {
+			log.Printf("UpsertUser in middleware: %v", err)
+			http.Error(w, `{"error":"Internal server error"}`, http.StatusInternalServerError)
+			return
+		}
 
 		ctx := context.WithValue(r.Context(), userIDKey, sub)
 		ctx = context.WithValue(ctx, userEmailKey, claims.Email)

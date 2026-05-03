@@ -51,10 +51,11 @@ func main() {
 	}
 
 	authed := func(h http.HandlerFunc) http.HandlerFunc {
-		return corsMiddleware(handlers.AuthMiddleware(verifier, h))
+		return corsMiddleware(handlers.AuthMiddleware(verifier, db, h))
 	}
 
-	meHandler := handlers.NewMeHandler(db)
+	userKeysHandler := handlers.NewUserKeysHandler(db)
+	outgoingsHandler := handlers.NewOutgoingsHandler(db)
 
 	mux := http.NewServeMux()
 
@@ -63,7 +64,10 @@ func main() {
 		json.NewEncoder(w).Encode(map[string]string{"status": "ok", "version": version})
 	}))
 
-	mux.HandleFunc("/v1/me", authed(meHandler.HandleMe))
+	mux.HandleFunc("/v1/me", authed(handlers.HandleMe))
+	mux.HandleFunc("/v1/me/key", authed(userKeysHandler.HandleKey))
+	mux.HandleFunc("/v1/outgoings", authed(outgoingsHandler.HandleCollection))
+	mux.HandleFunc("/v1/outgoings/", authed(outgoingsHandler.HandleByID))
 
 	mux.HandleFunc("/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)
