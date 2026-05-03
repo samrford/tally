@@ -1,11 +1,7 @@
 import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { Toaster } from 'react-hot-toast'
-import type { AuthContextType } from '@/lib/auth'
-
-interface RouterContext {
-  auth: AuthContextType
-}
+import type { RouterContext } from '@/lib/routeGuards'
 
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootLayout,
