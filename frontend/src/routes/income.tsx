@@ -4,7 +4,7 @@ import { INCOME_CATEGORIES } from '@/lib/flows'
 import { requireUnlocked } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/income')({
-  beforeLoad: ({ context }) => requireUnlocked(context),
+  beforeLoad: ({ context, location }) => requireUnlocked(context, location),
   component: IncomePage,
 })
 

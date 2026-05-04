@@ -45,6 +45,7 @@ interface Props {
   onSubmit: (plain: RecurringFormValues) => Promise<void>
   onCancel: () => void
   submitLabel?: string
+  cancelLabel?: string
   isLoading?: boolean
 }
 
@@ -62,6 +63,7 @@ export function RecurringForm({
   onSubmit,
   onCancel,
   submitLabel = 'Add',
+  cancelLabel = 'Cancel',
   isLoading,
 }: Props) {
   // Capture initial values once so dirty checks have a stable baseline.
@@ -242,7 +244,7 @@ export function RecurringForm({
 
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancel
+          {cancelLabel}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

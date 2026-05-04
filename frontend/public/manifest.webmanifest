@@ -1,0 +1,27 @@
+{
+  "name": "Tally",
+  "short_name": "Tally",
+  "description": "End-to-end encrypted personal finance tracker",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#f46a25",
+  "background_color": "#fbf7f4",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick add",
+      "short_name": "Add",
+      "description": "Log a spend or income in one tap",
+      "url": "/quick-add"
+    }
+  ]
+}

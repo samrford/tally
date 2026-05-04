@@ -36,6 +36,7 @@ interface Props {
   onSubmit: (plain: OneOffFormValues) => Promise<void>
   onCancel: () => void
   submitLabel?: string
+  cancelLabel?: string
   isLoading?: boolean
 }
 
@@ -54,6 +55,7 @@ export function OneOffForm({
   onSubmit,
   onCancel,
   submitLabel = 'Add',
+  cancelLabel = 'Cancel',
   isLoading,
 }: Props) {
   const baseline = useMemo(
@@ -141,7 +143,7 @@ export function OneOffForm({
 
       <DialogFooter>
         <Button type="button" variant="ghost" onClick={onCancel}>
-          Cancel
+          {cancelLabel}
         </Button>
         <Button type="submit" disabled={isLoading}>
           {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}

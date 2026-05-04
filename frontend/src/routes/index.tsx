@@ -21,7 +21,7 @@ import {
 import { amountForMonth, isActiveInMonth } from '@/lib/occurrences'
 
 export const Route = createFileRoute('/')({
-  beforeLoad: ({ context }) => requireUnlocked(context),
+  beforeLoad: ({ context, location }) => requireUnlocked(context, location),
   component: DashboardPage,
 })
 
