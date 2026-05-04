@@ -20,10 +20,10 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog'
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover'
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { MonthPicker } from '@/components/MonthPicker'
@@ -508,57 +508,74 @@ function RecurringRow({
   const { pence, isEstimate } = amountForMonth(item, ym)
 
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-md border bg-card">
-      <div className="font-medium flex-1 min-w-0 truncate">{item.name}</div>
-      <div className="text-xs font-medium uppercase text-primary w-20 shrink-0">
-        {item.category}
-      </div>
-      <div className="text-xs text-muted-foreground w-32 shrink-0">
-        {frequencyLabel(item.frequency)}
-      </div>
-      <div className="w-28 shrink-0 text-right">
-        {item.variable ? (
-          <div className="relative">
-            <VariableAmountInput
-              key={ym}
-              override={item.overrides?.[ym]}
-              estimate={pence}
-              isEstimate={isEstimate}
-              onCommit={onSetOverride}
-            />
-            {isEstimate && (
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    aria-label="About this estimate"
-                    className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center size-4 rounded-full bg-primary text-primary-foreground text-[9px] font-semibold leading-none cursor-help shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                  >
-                    i
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="top" className="max-w-xs">
-                  Estimate from baseline — enter actual value for the month.
-                </TooltipContent>
-              </Tooltip>
-            )}
+    <div className="rounded-md border bg-card px-3 sm:px-4 py-3">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="font-medium truncate">{item.name}</div>
+          <div className="mt-0.5 flex items-center gap-2 text-xs sm:hidden">
+            <span className="font-medium uppercase text-primary">
+              {item.category}
+            </span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-muted-foreground">
+              {frequencyLabel(item.frequency)}
+            </span>
           </div>
-        ) : (
-          <span className="font-medium tabular-nums">{formatGBP(pence)}</span>
-        )}
-      </div>
-      <div className="flex gap-1 shrink-0">
-        <Button variant="ghost" size="icon" onClick={onEdit} aria-label="Edit">
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onDelete}
-          aria-label="Delete"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+        </div>
+        <div className="hidden sm:block text-xs font-medium uppercase text-primary w-20 shrink-0">
+          {item.category}
+        </div>
+        <div className="hidden sm:block text-xs text-muted-foreground w-32 shrink-0">
+          {frequencyLabel(item.frequency)}
+        </div>
+        <div className="w-24 sm:w-28 shrink-0 text-right">
+          {item.variable ? (
+            <div className="relative">
+              <VariableAmountInput
+                key={ym}
+                override={item.overrides?.[ym]}
+                estimate={pence}
+                isEstimate={isEstimate}
+                onCommit={onSetOverride}
+              />
+              {isEstimate && (
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <button
+                      type="button"
+                      aria-label="About this estimate"
+                      className="absolute -top-1.5 -right-1.5 inline-flex items-center justify-center size-4 rounded-full bg-primary text-primary-foreground text-[9px] font-semibold leading-none shadow-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                    >
+                      i
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent
+                    side="top"
+                    align="end"
+                    className="w-auto max-w-xs p-3 text-xs"
+                  >
+                    Estimate from baseline — enter actual value for the month.
+                  </PopoverContent>
+                </Popover>
+              )}
+            </div>
+          ) : (
+            <span className="font-medium tabular-nums">{formatGBP(pence)}</span>
+          )}
+        </div>
+        <div className="flex gap-0.5 sm:gap-1 shrink-0">
+          <Button variant="ghost" size="icon" onClick={onEdit} aria-label="Edit">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            aria-label="Delete"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )
@@ -628,29 +645,42 @@ function OneOffRow({
   onDelete: () => void
 }) {
   return (
-    <div className="flex items-center gap-3 px-4 py-3 rounded-md border bg-card">
-      <div className="font-medium flex-1 min-w-0 truncate">{item.name}</div>
-      <div className="text-xs font-medium uppercase text-primary w-20 shrink-0">
-        {item.category}
-      </div>
-      <div className="text-xs text-muted-foreground w-32 shrink-0 tabular-nums">
-        {format(parseLocalISO(item.date), 'd MMM yyyy')}
-      </div>
-      <div className="font-medium tabular-nums w-28 shrink-0 text-right">
-        {formatGBP(item.amount)}
-      </div>
-      <div className="flex gap-1 shrink-0">
-        <Button variant="ghost" size="icon" onClick={onEdit} aria-label="Edit">
-          <Pencil className="h-4 w-4" />
-        </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={onDelete}
-          aria-label="Delete"
-        >
-          <Trash2 className="h-4 w-4" />
-        </Button>
+    <div className="rounded-md border bg-card px-3 sm:px-4 py-3">
+      <div className="flex items-center gap-2 sm:gap-3">
+        <div className="flex-1 min-w-0">
+          <div className="font-medium truncate">{item.name}</div>
+          <div className="mt-0.5 flex items-center gap-2 text-xs sm:hidden">
+            <span className="font-medium uppercase text-primary">
+              {item.category}
+            </span>
+            <span className="text-muted-foreground">·</span>
+            <span className="text-muted-foreground tabular-nums">
+              {format(parseLocalISO(item.date), 'd MMM yyyy')}
+            </span>
+          </div>
+        </div>
+        <div className="hidden sm:block text-xs font-medium uppercase text-primary w-20 shrink-0">
+          {item.category}
+        </div>
+        <div className="hidden sm:block text-xs text-muted-foreground w-32 shrink-0 tabular-nums">
+          {format(parseLocalISO(item.date), 'd MMM yyyy')}
+        </div>
+        <div className="font-medium tabular-nums w-24 sm:w-28 shrink-0 text-right">
+          {formatGBP(item.amount)}
+        </div>
+        <div className="flex gap-0.5 sm:gap-1 shrink-0">
+          <Button variant="ghost" size="icon" onClick={onEdit} aria-label="Edit">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onDelete}
+            aria-label="Delete"
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        </div>
       </div>
     </div>
   )

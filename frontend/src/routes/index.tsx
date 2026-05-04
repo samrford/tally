@@ -105,11 +105,18 @@ function DashboardPage() {
 
       <div className="max-w-5xl mx-auto space-y-8 relative">
         <header className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold">Tally</h1>
-            <p className="text-sm text-muted-foreground">
-              Signed in as {user?.email}
-            </p>
+          <div className="flex items-center gap-3">
+            <img
+              src="/tallylogotransp.png"
+              alt="Tally"
+              className="h-12 w-auto object-contain shrink-0"
+            />
+            <div>
+              <h1 className="text-3xl font-bold leading-none">Tally</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Signed in as {user?.email}
+              </p>
+            </div>
           </div>
           <div className="flex gap-2">
             <ThemeToggle />
