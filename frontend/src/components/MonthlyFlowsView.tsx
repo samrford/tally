@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react'
+import { lazy, Suspense, useRef, useState } from 'react'
 import { Link } from '@tanstack/react-router'
 import { format } from 'date-fns'
 import {
@@ -27,7 +27,14 @@ import {
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { MonthPicker } from '@/components/MonthPicker'
-import { CategoryPieChart } from '@/components/CategoryPieChart'
+// Lazy-loaded so recharts (~140KB gzipped) doesn't block the route's first
+// paint — the chart only renders when there's data to show, which is a
+// natural place to spend the network round-trip.
+const CategoryPieChart = lazy(() =>
+  import('@/components/CategoryPieChart').then((m) => ({
+    default: m.CategoryPieChart,
+  })),
+)
 import { RecurringForm, type FormHandle } from '@/components/RecurringForm'
 import { OneOffForm } from '@/components/OneOffForm'
 import { useKeystore } from '@/lib/keystore'
@@ -266,11 +273,13 @@ export function MonthlyFlowsView({ direction, title, categories }: Props) {
               <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-4">
                 By category
               </h2>
-              <CategoryPieChart
-                data={categoryData}
-                total={monthlyTotal}
-                categories={categories}
-              />
+              <Suspense fallback={<div className="h-56" />}>
+                <CategoryPieChart
+                  data={categoryData}
+                  total={monthlyTotal}
+                  categories={categories}
+                />
+              </Suspense>
             </CardContent>
           </Card>
         )}
