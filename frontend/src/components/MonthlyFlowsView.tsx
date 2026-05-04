@@ -27,6 +27,7 @@ import {
 import { cn } from '@/lib/utils'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { MonthPicker } from '@/components/MonthPicker'
+import { CategoryPieChart } from '@/components/CategoryPieChart'
 import { RecurringForm, type FormHandle } from '@/components/RecurringForm'
 import { OneOffForm } from '@/components/OneOffForm'
 import { useKeystore } from '@/lib/keystore'
@@ -156,6 +157,19 @@ export function MonthlyFlowsView({ direction, title, categories }: Props) {
   const oneOffTotal = monthOneOffs.reduce((sum, o) => sum + o.amount, 0)
   const monthlyTotal = recurringTotal + oneOffTotal
 
+  // Per-category totals for the chart.
+  const categoryTotals = new Map<Category, number>()
+  const addCategory = (cat: Category, pence: number) => {
+    categoryTotals.set(cat, (categoryTotals.get(cat) ?? 0) + pence)
+  }
+  activeRecurring.forEach((r) =>
+    addCategory(r.category, amountForMonth(r, selectedMonth).pence),
+  )
+  monthOneOffs.forEach((o) => addCategory(o.category, o.amount))
+  const categoryData = Array.from(categoryTotals.entries()).map(
+    ([category, pence]) => ({ category, pence }),
+  )
+
   const editingRecurring =
     modal?.kind === 'edit-recurring'
       ? recurring.find((r) => r.id === modal.id)
@@ -245,6 +259,21 @@ export function MonthlyFlowsView({ direction, title, categories }: Props) {
             </div>
           </CardContent>
         </Card>
+
+        {monthlyTotal > 0 && (
+          <Card>
+            <CardContent className="pt-6">
+              <h2 className="text-xs font-medium uppercase tracking-wide text-muted-foreground mb-4">
+                By category
+              </h2>
+              <CategoryPieChart
+                data={categoryData}
+                total={monthlyTotal}
+                categories={categories}
+              />
+            </CardContent>
+          </Card>
+        )}
 
         <section className="space-y-3">
           <div className="flex items-center justify-between gap-3 flex-wrap">
