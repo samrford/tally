@@ -60,7 +60,7 @@ function DashboardPage() {
                 </div>
                 <h3 className="text-xl font-semibold">Outgoings</h3>
                 <p className="text-sm text-muted-foreground">
-                  Track what you spend
+                  Recurring bills and monthly one-offs
                 </p>
               </CardContent>
             </Card>
