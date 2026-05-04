@@ -85,7 +85,7 @@ function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+    <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-4 relative overflow-hidden">
       <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/15 rounded-full blur-[150px] pointer-events-none" />
       <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/30 rounded-full blur-[150px] pointer-events-none" />
 
@@ -93,9 +93,15 @@ function LoginPage() {
         <ThemeToggle />
       </div>
 
+      <img
+        src="/talllylogotexttransp.png"
+        alt="Tally"
+        className="h-28 w-auto object-contain shrink-0 relative z-10"
+      />
+
       <Card className="w-full max-w-md relative z-10">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center">Welcome to Tally</CardTitle>
+          <CardTitle className="text-2xl text-center">Welcome back</CardTitle>
           <CardDescription className="text-center">
             Sign in to track your finances
           </CardDescription>
