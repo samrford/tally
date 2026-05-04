@@ -24,11 +24,15 @@ import {
   GithubIcon,
 } from '@/components/OAuthIcons'
 import { supabase } from '@/lib/supabase'
+import { safeNext } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/login')({
-  beforeLoad: ({ context }) => {
+  validateSearch: (search): { next?: string } => ({
+    next: safeNext(search.next),
+  }),
+  beforeLoad: ({ context, search }) => {
     if (context.auth.user) {
-      throw redirect({ to: '/' })
+      throw redirect({ to: search.next ?? '/' })
     }
   },
   component: LoginPage,
@@ -38,6 +42,7 @@ type Provider = 'google' | 'discord' | 'github'
 
 function LoginPage() {
   const navigate = useNavigate()
+  const { next } = Route.useSearch()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
@@ -57,17 +62,20 @@ function LoginPage() {
       setIsLoading(false)
       return
     }
-    navigate({ to: '/' })
+    navigate({ to: next ?? '/' })
   }
 
   const handleSocialLogin = async (provider: Provider) => {
     setSocialLoading(provider)
 
+    // Preserve ?next= across the OAuth round-trip via the redirect URL.
+    const redirectTo = next
+      ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(next)}`
+      : `${window.location.origin}/auth/callback`
+
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
-      },
+      options: { redirectTo },
     })
 
     if (error) {

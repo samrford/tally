@@ -2,13 +2,19 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useEffect, useState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
+import { safeNext } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/auth/callback')({
+  validateSearch: (search): { next?: string } => ({
+    next: safeNext(search.next),
+  }),
   component: AuthCallbackPage,
 })
 
 function AuthCallbackPage() {
   const navigate = useNavigate()
+  const { next } = Route.useSearch()
+  const target = next ?? '/'
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
@@ -20,7 +26,7 @@ function AuthCallbackPage() {
       console.log('[auth/callback] event:', event, 'hasSession:', !!session)
       if (cancelled) return
       if (event === 'SIGNED_IN' && session) {
-        navigate({ to: '/' })
+        navigate({ to: target })
       }
     })
 
@@ -37,7 +43,7 @@ function AuthCallbackPage() {
         return
       }
       if (data.session) {
-        navigate({ to: '/' })
+        navigate({ to: target })
       }
     })
 
@@ -56,7 +62,7 @@ function AuthCallbackPage() {
       sub.subscription.unsubscribe()
       window.clearTimeout(timer)
     }
-  }, [navigate])
+  }, [navigate, target])
 
   if (error) {
     return (

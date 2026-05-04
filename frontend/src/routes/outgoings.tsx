@@ -4,7 +4,7 @@ import { OUTGOING_CATEGORIES } from '@/lib/flows'
 import { requireUnlocked } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/outgoings')({
-  beforeLoad: ({ context }) => requireUnlocked(context),
+  beforeLoad: ({ context, location }) => requireUnlocked(context, location),
   component: OutgoingsPage,
 })
 

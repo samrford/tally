@@ -14,14 +14,22 @@ import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/ThemeToggle'
 import { unwrapDek } from '@/lib/crypto'
 import { useKeystore } from '@/lib/keystore'
+import { safeNext } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/unlock')({
-  beforeLoad: ({ context }) => {
-    if (!context.auth.user) throw redirect({ to: '/login' })
+  validateSearch: (search): { next?: string } => ({
+    next: safeNext(search.next),
+  }),
+  beforeLoad: ({ context, search }) => {
+    if (!context.auth.user) {
+      throw redirect({ to: '/login', search: { next: search.next } })
+    }
     if (context.keystore.hasKeySetup === false) {
       throw redirect({ to: '/setup-passphrase' })
     }
-    if (context.keystore.dek) throw redirect({ to: '/' })
+    if (context.keystore.dek) {
+      throw redirect({ to: search.next ?? '/' })
+    }
   },
   component: UnlockPage,
 })
@@ -29,6 +37,7 @@ export const Route = createFileRoute('/unlock')({
 function UnlockPage() {
   const navigate = useNavigate()
   const keystore = useKeystore()
+  const { next } = Route.useSearch()
   const [passphrase, setPassphrase] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -42,7 +51,7 @@ function UnlockPage() {
       const wrapped = await keystore.fetchWrappedKey()
       const dekBytes = await unwrapDek(passphrase, wrapped)
       await keystore.setDek(dekBytes)
-      navigate({ to: '/' })
+      navigate({ to: next ?? '/' })
     } catch (err) {
       // AES-GCM auth tag mismatch on wrong passphrase throws here
       console.error('[unlock]', err)
