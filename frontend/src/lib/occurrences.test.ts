@@ -4,7 +4,7 @@ import {
   amountForMonth,
   isActiveInMonth,
 } from './occurrences'
-import type { RecurringPlain } from './outgoings'
+import type { RecurringPlain } from './flows'
 
 const monthly = (startDate: string, endDate?: string) => ({
   startDate,
@@ -135,6 +135,7 @@ describe('isActiveInMonth', () => {
 describe('amountForMonth', () => {
   const baseRecurring = (overrides: Partial<RecurringPlain> = {}): RecurringPlain => ({
     kind: 'recurring',
+    direction: 'out',
     name: 'Test',
     amount: 1500,
     category: 'bills',

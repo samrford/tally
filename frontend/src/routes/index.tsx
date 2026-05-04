@@ -66,10 +66,19 @@ function DashboardPage() {
             </Card>
           </Link>
 
-          <ComingSoonCard
-            icon={<ArrowDownCircle className="h-8 w-8" />}
-            title="Income"
-          />
+          <Link to="/income" className="block group">
+            <Card className="h-full transition-all group-hover:border-primary/50 group-hover:shadow-lg cursor-pointer">
+              <CardContent className="pt-6 space-y-2">
+                <div className="text-primary">
+                  <ArrowDownCircle className="h-8 w-8" />
+                </div>
+                <h3 className="text-xl font-semibold">Income</h3>
+                <p className="text-sm text-muted-foreground">
+                  Salary, freelance, and one-offs
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
           <ComingSoonCard
             icon={<PiggyBank className="h-8 w-8" />}
             title="Savings"

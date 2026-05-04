@@ -5,7 +5,7 @@
 // Date handling is UTC-only to dodge DST/local-time edge cases. Inputs and
 // outputs are 'YYYY-MM-DD' / 'YYYY-MM' strings.
 
-import type { Frequency, RecurringPlain } from '@/lib/outgoings'
+import type { Frequency, RecurringPlain } from '@/lib/flows'
 
 const MAX_ITERATIONS = 10_000 // safety cap; well above any realistic schedule
 

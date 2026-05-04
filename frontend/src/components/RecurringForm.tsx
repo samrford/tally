@@ -19,16 +19,20 @@ import {
 import { DialogFooter } from '@/components/ui/dialog'
 import { DatePicker } from '@/components/DatePicker'
 import {
-  CATEGORIES,
   type Category,
+  type Frequency,
   type FrequencyUnit,
-  type RecurringPlain,
-} from '@/lib/outgoings'
+} from '@/lib/flows'
 
-export type RecurringFormValues = Omit<
-  RecurringPlain,
-  'kind' | 'overrides'
->
+export interface RecurringFormValues {
+  name: string
+  amount: number // pence
+  category: Category
+  frequency: Frequency
+  startDate: string
+  endDate?: string
+  variable?: boolean
+}
 
 export interface FormHandle {
   isDirty: () => boolean
@@ -37,6 +41,7 @@ export interface FormHandle {
 interface Props {
   ref?: Ref<FormHandle>
   initial?: RecurringFormValues
+  categories: readonly Category[]
   onSubmit: (plain: RecurringFormValues) => Promise<void>
   onCancel: () => void
   submitLabel?: string
@@ -53,6 +58,7 @@ function todayISO(): string {
 export function RecurringForm({
   ref,
   initial,
+  categories,
   onSubmit,
   onCancel,
   submitLabel = 'Add',
@@ -63,14 +69,14 @@ export function RecurringForm({
     () => ({
       name: initial?.name ?? '',
       amount: initial ? (initial.amount / 100).toFixed(2) : '',
-      category: (initial?.category ?? 'bills') as Category,
+      category: (initial?.category ?? categories[0]) as Category,
       period: String(initial?.frequency.period ?? 1),
       unit: (initial?.frequency.unit ?? 'month') as FrequencyUnit,
       startDate: initial?.startDate ?? todayISO(),
       endDate: initial?.endDate ?? '',
       variable: initial?.variable ?? false,
     }),
-    [initial],
+    [initial, categories],
   )
 
   const [name, setName] = useState(baseline.name)
@@ -157,7 +163,7 @@ export function RecurringForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <SelectItem key={c} value={c} className="capitalize">
                   {c}
                 </SelectItem>
