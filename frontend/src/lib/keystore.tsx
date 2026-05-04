@@ -114,9 +114,6 @@ export function KeystoreProvider({ children }: { children: ReactNode }) {
   }, [])
 
   // Track auth state — clear DEK on sign-out, re-check key status on sign-in.
-  // We narrow to SIGNED_IN and INITIAL_SESSION (rather than "any event with a
-  // session") because TOKEN_REFRESHED and USER_UPDATED also carry a session
-  // but don't affect the wrapped key — re-fetching on those just spams the API.
   useEffect(() => {
     const {
       data: { subscription },
