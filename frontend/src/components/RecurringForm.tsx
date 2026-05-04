@@ -27,7 +27,7 @@ import {
 
 export type RecurringFormValues = Omit<
   RecurringPlain,
-  'v' | 'kind' | 'overrides'
+  'kind' | 'overrides'
 >
 
 export interface FormHandle {

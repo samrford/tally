@@ -134,7 +134,6 @@ describe('isActiveInMonth', () => {
 
 describe('amountForMonth', () => {
   const baseRecurring = (overrides: Partial<RecurringPlain> = {}): RecurringPlain => ({
-    v: 2,
     kind: 'recurring',
     name: 'Test',
     amount: 1500,

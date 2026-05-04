@@ -38,7 +38,7 @@ import {
   frequencyLabel,
   type RecurringOutgoing,
   type OneOffOutgoing,
-  type CreateInput,
+  type OutgoingPlain,
 } from '@/lib/outgoings'
 import { amountForMonth, isActiveInMonth } from '@/lib/occurrences'
 
@@ -84,12 +84,12 @@ function parseLocalISO(s: string): Date {
   return new Date(y, m - 1, d)
 }
 
-// Rebuilds a CreateInput from a stored recurring item, optionally swapping
+// Rebuilds a OutgoingPlain from a stored recurring item, optionally swapping
 // in new overrides.
 function recurringToInput(
   item: RecurringOutgoing,
   overrides?: Record<string, number>,
-): CreateInput {
+): OutgoingPlain {
   const finalOverrides = overrides ?? item.overrides
   const hasOverrides =
     finalOverrides && Object.keys(finalOverrides).length > 0

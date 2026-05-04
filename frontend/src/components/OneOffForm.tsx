@@ -25,7 +25,7 @@ import {
 } from '@/lib/outgoings'
 import type { FormHandle } from '@/components/RecurringForm'
 
-export type OneOffFormValues = Omit<OneOffPlain, 'v' | 'kind'>
+export type OneOffFormValues = Omit<OneOffPlain, 'kind'>
 
 interface Props {
   ref?: Ref<FormHandle>

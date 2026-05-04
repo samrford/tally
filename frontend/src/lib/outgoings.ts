@@ -23,7 +23,6 @@ export interface Frequency {
 // --- Plaintext shapes (what we encrypt/decrypt) -----------------------------
 
 export interface RecurringPlain {
-  v: 2
   kind: 'recurring'
   name: string
   amount: number // pence; per-occurrence baseline
@@ -36,7 +35,6 @@ export interface RecurringPlain {
 }
 
 export interface OneOffPlain {
-  v: 2
   kind: 'one-off'
   name: string
   amount: number // pence
@@ -98,20 +96,12 @@ export function useOutgoings(dek: CryptoKey | null) {
   })
 }
 
-// Distributed over the union so each branch keeps its own discriminator-
-// specific fields. `Omit<OutgoingPlain, 'v'>` would collapse to just the
-// common keys.
-export type CreateInput =
-  | Omit<RecurringPlain, 'v'>
-  | Omit<OneOffPlain, 'v'>
-
 export function useCreateOutgoing(dek: CryptoKey | null) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async (plain: CreateInput) => {
+    mutationFn: async (plain: OutgoingPlain) => {
       if (!dek) throw new Error('Locked')
-      const record = { v: 2, ...plain } as OutgoingPlain
-      const ciphertext = await encryptJSON(record, dek)
+      const ciphertext = await encryptJSON(plain, dek)
       return apiFetch<OutgoingAPI>('/v1/outgoings', {
         method: 'POST',
         body: JSON.stringify({ ciphertext }),
@@ -124,10 +114,9 @@ export function useCreateOutgoing(dek: CryptoKey | null) {
 export function useUpdateOutgoing(dek: CryptoKey | null) {
   const qc = useQueryClient()
   return useMutation({
-    mutationFn: async (args: { id: string; plain: CreateInput }) => {
+    mutationFn: async (args: { id: string; plain: OutgoingPlain }) => {
       if (!dek) throw new Error('Locked')
-      const record = { v: 2, ...args.plain } as OutgoingPlain
-      const ciphertext = await encryptJSON(record, dek)
+      const ciphertext = await encryptJSON(args.plain, dek)
       return apiFetch<OutgoingAPI>(`/v1/outgoings/${args.id}`, {
         method: 'PUT',
         body: JSON.stringify({ ciphertext }),
