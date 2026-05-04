@@ -18,19 +18,21 @@ import {
 } from '@/components/ui/select'
 import { DialogFooter } from '@/components/ui/dialog'
 import { DatePicker } from '@/components/DatePicker'
-import {
-  CATEGORIES,
-  type Category,
-  type OneOffPlain,
-} from '@/lib/outgoings'
+import { type Category } from '@/lib/flows'
 import type { FormHandle } from '@/components/RecurringForm'
 
-export type OneOffFormValues = Omit<OneOffPlain, 'kind'>
+export interface OneOffFormValues {
+  name: string
+  amount: number // pence
+  category: Category
+  date: string
+}
 
 interface Props {
   ref?: Ref<FormHandle>
   initial?: OneOffFormValues
   defaultDate?: string
+  categories: readonly Category[]
   onSubmit: (plain: OneOffFormValues) => Promise<void>
   onCancel: () => void
   submitLabel?: string
@@ -48,6 +50,7 @@ export function OneOffForm({
   ref,
   initial,
   defaultDate,
+  categories,
   onSubmit,
   onCancel,
   submitLabel = 'Add',
@@ -57,10 +60,10 @@ export function OneOffForm({
     () => ({
       name: initial?.name ?? '',
       amount: initial ? (initial.amount / 100).toFixed(2) : '',
-      category: (initial?.category ?? 'food') as Category,
+      category: (initial?.category ?? categories[0]) as Category,
       date: initial?.date ?? defaultDate ?? todayISO(),
     }),
-    [initial, defaultDate],
+    [initial, defaultDate, categories],
   )
 
   const [name, setName] = useState(baseline.name)
@@ -121,7 +124,7 @@ export function OneOffForm({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {CATEGORIES.map((c) => (
+              {categories.map((c) => (
                 <SelectItem key={c} value={c} className="capitalize">
                   {c}
                 </SelectItem>

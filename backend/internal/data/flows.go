@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type Outgoing struct {
+type Flow struct {
 	ID         string
 	UserID     string
 	Ciphertext []byte
@@ -15,12 +15,12 @@ type Outgoing struct {
 	UpdatedAt  time.Time
 }
 
-var ErrOutgoingNotFound = errors.New("outgoing not found")
+var ErrFlowNotFound = errors.New("flow not found")
 
-func ListOutgoings(ctx context.Context, db *sql.DB, userID string) ([]Outgoing, error) {
+func ListFlows(ctx context.Context, db *sql.DB, userID string) ([]Flow, error) {
 	rows, err := db.QueryContext(ctx, `
 		SELECT id, user_id, ciphertext, created_at, updated_at
-		FROM outgoings
+		FROM flows
 		WHERE user_id = $1
 		ORDER BY created_at DESC
 	`, userID)
@@ -29,53 +29,53 @@ func ListOutgoings(ctx context.Context, db *sql.DB, userID string) ([]Outgoing, 
 	}
 	defer rows.Close()
 
-	out := []Outgoing{}
+	out := []Flow{}
 	for rows.Next() {
-		var o Outgoing
-		if err := rows.Scan(&o.ID, &o.UserID, &o.Ciphertext, &o.CreatedAt, &o.UpdatedAt); err != nil {
+		var f Flow
+		if err := rows.Scan(&f.ID, &f.UserID, &f.Ciphertext, &f.CreatedAt, &f.UpdatedAt); err != nil {
 			return nil, err
 		}
-		out = append(out, o)
+		out = append(out, f)
 	}
 	return out, rows.Err()
 }
 
-func CreateOutgoing(ctx context.Context, db *sql.DB, userID string, ciphertext []byte) (*Outgoing, error) {
+func CreateFlow(ctx context.Context, db *sql.DB, userID string, ciphertext []byte) (*Flow, error) {
 	row := db.QueryRowContext(ctx, `
-		INSERT INTO outgoings (user_id, ciphertext)
+		INSERT INTO flows (user_id, ciphertext)
 		VALUES ($1, $2)
 		RETURNING id, user_id, ciphertext, created_at, updated_at
 	`, userID, ciphertext)
 
-	var o Outgoing
-	if err := row.Scan(&o.ID, &o.UserID, &o.Ciphertext, &o.CreatedAt, &o.UpdatedAt); err != nil {
+	var f Flow
+	if err := row.Scan(&f.ID, &f.UserID, &f.Ciphertext, &f.CreatedAt, &f.UpdatedAt); err != nil {
 		return nil, err
 	}
-	return &o, nil
+	return &f, nil
 }
 
-func UpdateOutgoing(ctx context.Context, db *sql.DB, userID, id string, ciphertext []byte) (*Outgoing, error) {
+func UpdateFlow(ctx context.Context, db *sql.DB, userID, id string, ciphertext []byte) (*Flow, error) {
 	row := db.QueryRowContext(ctx, `
-		UPDATE outgoings
+		UPDATE flows
 		SET ciphertext = $1, updated_at = NOW()
 		WHERE id = $2 AND user_id = $3
 		RETURNING id, user_id, ciphertext, created_at, updated_at
 	`, ciphertext, id, userID)
 
-	var o Outgoing
-	err := row.Scan(&o.ID, &o.UserID, &o.Ciphertext, &o.CreatedAt, &o.UpdatedAt)
+	var f Flow
+	err := row.Scan(&f.ID, &f.UserID, &f.Ciphertext, &f.CreatedAt, &f.UpdatedAt)
 	if errors.Is(err, sql.ErrNoRows) {
-		return nil, ErrOutgoingNotFound
+		return nil, ErrFlowNotFound
 	}
 	if err != nil {
 		return nil, err
 	}
-	return &o, nil
+	return &f, nil
 }
 
-func DeleteOutgoing(ctx context.Context, db *sql.DB, userID, id string) error {
+func DeleteFlow(ctx context.Context, db *sql.DB, userID, id string) error {
 	res, err := db.ExecContext(ctx, `
-		DELETE FROM outgoings
+		DELETE FROM flows
 		WHERE id = $1 AND user_id = $2
 	`, id, userID)
 	if err != nil {
@@ -86,7 +86,7 @@ func DeleteOutgoing(ctx context.Context, db *sql.DB, userID, id string) error {
 		return err
 	}
 	if n == 0 {
-		return ErrOutgoingNotFound
+		return ErrFlowNotFound
 	}
 	return nil
 }

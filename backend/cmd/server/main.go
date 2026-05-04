@@ -55,7 +55,7 @@ func main() {
 	}
 
 	userKeysHandler := handlers.NewUserKeysHandler(db)
-	outgoingsHandler := handlers.NewOutgoingsHandler(db)
+	flowsHandler := handlers.NewFlowsHandler(db)
 
 	mux := http.NewServeMux()
 
@@ -66,8 +66,8 @@ func main() {
 
 	mux.HandleFunc("/v1/me", authed(handlers.HandleMe))
 	mux.HandleFunc("/v1/me/key", authed(userKeysHandler.HandleKey))
-	mux.HandleFunc("/v1/outgoings", authed(outgoingsHandler.HandleCollection))
-	mux.HandleFunc("/v1/outgoings/", authed(outgoingsHandler.HandleByID))
+	mux.HandleFunc("/v1/flows", authed(flowsHandler.HandleCollection))
+	mux.HandleFunc("/v1/flows/", authed(flowsHandler.HandleByID))
 
 	mux.HandleFunc("/", corsMiddleware(func(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusNotFound)

@@ -1,19 +1,19 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { MonthlyFlowsView } from '@/components/MonthlyFlowsView'
-import { OUTGOING_CATEGORIES } from '@/lib/flows'
+import { INCOME_CATEGORIES } from '@/lib/flows'
 import { requireUnlocked } from '@/lib/routeGuards'
 
-export const Route = createFileRoute('/outgoings')({
+export const Route = createFileRoute('/income')({
   beforeLoad: ({ context }) => requireUnlocked(context),
-  component: OutgoingsPage,
+  component: IncomePage,
 })
 
-function OutgoingsPage() {
+function IncomePage() {
   return (
     <MonthlyFlowsView
-      direction="out"
-      title="Outgoings"
-      categories={OUTGOING_CATEGORIES}
+      direction="in"
+      title="Income"
+      categories={INCOME_CATEGORIES}
     />
   )
 }
