@@ -7,6 +7,7 @@ import { routeTree } from './routeTree.gen'
 import { AuthProvider, useAuth } from './lib/auth'
 import { KeystoreProvider, useKeystore } from './lib/keystore'
 import { ThemeProvider } from './lib/theme'
+import { TooltipProvider } from './components/ui/tooltip'
 import './index.css'
 
 const queryClient = new QueryClient()
@@ -48,7 +49,9 @@ createRoot(document.getElementById('root')!).render(
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
           <KeystoreProvider>
-            <InnerApp />
+            <TooltipProvider delayDuration={200}>
+              <InnerApp />
+            </TooltipProvider>
           </KeystoreProvider>
         </AuthProvider>
       </QueryClientProvider>
