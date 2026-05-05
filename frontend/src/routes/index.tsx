@@ -2,6 +2,7 @@ import { createFileRoute, Link, useNavigate } from '@tanstack/react-router'
 import {
   ArrowDownCircle,
   ArrowUpCircle,
+  Calculator,
   LogOut,
   PiggyBank,
   Wallet,
@@ -154,6 +155,28 @@ function DashboardPage() {
             icon={<Wallet className="h-10 w-10" />}
             title="Pension"
           />
+        </div>
+
+        <div>
+          <Link to="/tax-calculator" className="block group">
+            <Card className="transition-all group-hover:border-primary/50 group-hover:shadow-lg cursor-pointer">
+              <CardContent className="p-5 flex items-center gap-4">
+                <div className="text-primary">
+                  <Calculator className="h-7 w-7" />
+                </div>
+                <div className="flex-1">
+                  <h3 className="font-semibold">Salary calculator</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Work out take-home from gross salary, pension and other
+                    deductions — then save it as recurring income.
+                  </p>
+                </div>
+                <span className="text-xs uppercase tracking-wide text-muted-foreground hidden sm:block">
+                  UK PAYE
+                </span>
+              </CardContent>
+            </Card>
+          </Link>
         </div>
       </div>
     </div>
