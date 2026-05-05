@@ -13,11 +13,7 @@ import { TaxCalculatorInputs } from '@/components/TaxCalculatorInputs'
 import { TaxCalculatorBreakdown } from '@/components/TaxCalculatorBreakdown'
 import { useKeystore } from '@/lib/keystore'
 import { formatGBP, todayISO } from '@/lib/format'
-import {
-  useCreateFlow,
-  type Deduction,
-  type RecurringPlain,
-} from '@/lib/flows'
+import { useCreateFlow, type RecurringPlain } from '@/lib/flows'
 import {
   calculateTakeHome,
   type OtherDeduction,
@@ -37,57 +33,6 @@ const parsePensionPct = (s: string): number => {
   const n = parseFloat(s)
   if (!isFinite(n) || n < 0) return 0
   return Math.min(100, n)
-}
-
-// Builds the Deduction[] attached to the saved recurring income, in the
-// order they appear in the breakdown so the income detail view can render
-// them top-to-bottom without re-sorting.
-function buildDeductions(
-  breakdown: TaxBreakdown,
-  pensionPct: number,
-  other: OtherDeduction[],
-): Deduction[] {
-  const out: Deduction[] = []
-  if (breakdown.monthly.pension > 0) {
-    out.push({
-      name: `Pension (${pensionPct}% sacrifice)`,
-      amount: breakdown.monthly.pension,
-      type: 'pension',
-    })
-  }
-  other
-    .filter((d) => d.preTax && d.monthly > 0)
-    .forEach((d) =>
-      out.push({
-        name: d.name.trim() || 'Pre-tax deduction',
-        amount: d.monthly,
-        type: 'other',
-      }),
-    )
-  if (breakdown.monthly.incomeTax > 0) {
-    out.push({
-      name: 'Income Tax',
-      amount: breakdown.monthly.incomeTax,
-      type: 'tax',
-    })
-  }
-  if (breakdown.monthly.ni > 0) {
-    out.push({
-      name: 'National Insurance',
-      amount: breakdown.monthly.ni,
-      type: 'ni',
-    })
-  }
-  other
-    .filter((d) => !d.preTax && d.monthly > 0)
-    .forEach((d) =>
-      out.push({
-        name: d.name.trim() || 'Post-tax deduction',
-        amount: d.monthly,
-        type: 'other',
-      }),
-    )
-  return out
 }
 
 export function TaxCalculatorPage() {
@@ -144,12 +89,10 @@ export function TaxCalculatorPage() {
       kind: 'recurring',
       direction: 'in',
       name: name.trim() || 'Salary',
-      amount: breakdown.monthly.gross,
+      amount: breakdown.monthly.net,
       category: 'salary',
       frequency: { period: 1, unit: 'month' },
       startDate: todayISO(),
-      deductions: buildDeductions(breakdown, pensionPct, other),
-      taxable: true,
     }
     try {
       await create.mutateAsync(plain)
@@ -236,11 +179,12 @@ export function TaxCalculatorPage() {
                       Save as recurring income
                     </Label>
                     <p className="text-xs text-muted-foreground">
-                      Adds a monthly income of{' '}
+                      Adds your net monthly take-home of{' '}
                       <span className="font-semibold text-foreground tabular-nums">
                         {formatGBP(breakdown.monthly.net)}
                       </span>{' '}
-                      starting today, with the breakdown attached.
+                      — what actually lands in your bank after tax, NI and
+                      deductions — starting today.
                     </p>
                   </div>
                   <div className="flex flex-col sm:flex-row gap-2">
