@@ -3,10 +3,13 @@
 // All money is handled in pence (integer) to avoid float drift. Inputs are
 // annual figures; convert to monthly at the call site if needed.
 //
-// Rates reflect HMRC bands as frozen through April 2028 (rUK — Scotland uses
-// a different income-tax schedule which is not modelled here). Pension salary
-// sacrifice is applied before both income tax and NI: that's the whole point
-// of the salary-sacrifice arrangement.
+// Tax-year configs are loaded from JSON files in `src/data/uk-tax/` — see
+// the README-style `notes` field in each file. To add a new tax year, drop
+// in a new JSON file and import it below. Pension salary sacrifice is
+// applied before both income tax and NI: that's the whole point of the
+// salary-sacrifice arrangement.
+
+import taxYear2025_26 from '@/data/uk-tax/2025-26.json'
 
 export interface NIBand {
   // Upper bound of this NI band in pence; null = open-ended (top band).
@@ -31,22 +34,50 @@ export interface TaxYearConfig {
   niBands: NIBand[]
 }
 
-// 2025/26 rUK rates — also current for 2026/27 under the freeze.
-export const UK_2025_26: TaxYearConfig = {
-  label: '2025/26',
-  personalAllowance: 1_257_000,
-  paTaperStart: 10_000_000,
-  basicRateBandWidth: 3_770_000,
-  basicRate: 0.2,
-  additionalRateThreshold: 12_514_000,
-  higherRate: 0.4,
-  additionalRate: 0.45,
-  niBands: [
-    { upTo: 1_257_000, rate: 0 },
-    { upTo: 5_027_000, rate: 0.08 },
-    { upTo: null, rate: 0.02 },
-  ],
+// JSON shape — human/AI-friendly. Money in whole £, rates in %.
+// The loader (`loadTaxConfig`) converts to internal pence + decimal form.
+export interface TaxYearJSON {
+  label: string
+  country?: string
+  notes?: string[]
+  incomeTax: {
+    personalAllowance: number // £
+    personalAllowanceTaperStart: number // £
+    basicRateBandWidth: number // £
+    additionalRateThreshold: number // £
+    rates: {
+      basic: number // %
+      higher: number // %
+      additional: number // %
+    }
+  }
+  nationalInsurance: {
+    bands: { upTo: number | null; rate: number; label?: string }[] // £, %
+  }
 }
+
+const toPence = (pounds: number) => Math.round(pounds * 100)
+const toRate = (pct: number) => pct / 100
+
+export function loadTaxConfig(json: TaxYearJSON): TaxYearConfig {
+  return {
+    label: json.label,
+    personalAllowance: toPence(json.incomeTax.personalAllowance),
+    paTaperStart: toPence(json.incomeTax.personalAllowanceTaperStart),
+    basicRateBandWidth: toPence(json.incomeTax.basicRateBandWidth),
+    basicRate: toRate(json.incomeTax.rates.basic),
+    additionalRateThreshold: toPence(json.incomeTax.additionalRateThreshold),
+    higherRate: toRate(json.incomeTax.rates.higher),
+    additionalRate: toRate(json.incomeTax.rates.additional),
+    niBands: json.nationalInsurance.bands.map((b) => ({
+      upTo: b.upTo === null ? null : toPence(b.upTo),
+      rate: toRate(b.rate),
+    })),
+  }
+}
+
+// 2025/26 rUK rates — also current for 2026/27 under the freeze.
+export const UK_2025_26: TaxYearConfig = loadTaxConfig(taxYear2025_26)
 
 function effectivePersonalAllowance(
   gross: number,

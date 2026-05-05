@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { TaxCalculatorPage } from '@/components/TaxCalculator'
+import { TaxCalculatorPage } from '@/components/take-home-calc/TaxCalculator'
 import { requireUnlocked } from '@/lib/routeGuards'
 
 export const Route = createFileRoute('/tax-calculator')({

@@ -1,0 +1,28 @@
+{
+  "label": "2025/26",
+  "country": "UK (England, Wales & Northern Ireland)",
+  "notes": [
+    "All money values are whole £. All rates are %.",
+    "Personal allowance and thresholds frozen through April 2028 — same numbers apply 2026/27.",
+    "Scotland uses a different income-tax schedule and is NOT modelled here.",
+    "NI is Class 1, employee, Category A. Self-employed and other categories are NOT modelled."
+  ],
+  "incomeTax": {
+    "personalAllowance": 12570,
+    "personalAllowanceTaperStart": 100000,
+    "basicRateBandWidth": 37700,
+    "additionalRateThreshold": 125140,
+    "rates": {
+      "basic": 20,
+      "higher": 40,
+      "additional": 45
+    }
+  },
+  "nationalInsurance": {
+    "bands": [
+      { "upTo": 12570, "rate": 0, "label": "Below primary threshold" },
+      { "upTo": 50270, "rate": 8, "label": "PT to UEL (main rate)" },
+      { "upTo": null, "rate": 2, "label": "Above UEL" }
+    ]
+  }
+}
