@@ -51,12 +51,7 @@ import {
   type OneOffFlow,
 } from '@/lib/flows'
 import { amountForMonth, isActiveInMonth } from '@/lib/occurrences'
-
-const gbp = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP',
-})
-const formatGBP = (pence: number) => gbp.format(pence / 100)
+import { formatGBP } from '@/lib/format'
 
 function currentMonth(): string {
   const d = new Date()

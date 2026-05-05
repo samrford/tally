@@ -7,12 +7,7 @@ import {
   type ChartConfig,
 } from '@/components/ui/chart'
 import type { Category } from '@/lib/flows'
-
-const gbp = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP',
-})
-const formatGBP = (pence: number) => gbp.format(pence / 100)
+import { formatGBP } from '@/lib/format'
 
 const colorForIndex = (i: number) => `hsl(var(--chart-${(i % 7) + 1}))`
 

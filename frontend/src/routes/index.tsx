@@ -10,6 +10,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { PageBackdrop } from '@/components/PageBackdrop'
 import { useAuth } from '@/lib/auth'
 import { useKeystore } from '@/lib/keystore'
 import { requireUnlocked } from '@/lib/routeGuards'
@@ -20,17 +21,12 @@ import {
   type OneOffFlow,
 } from '@/lib/flows'
 import { amountForMonth, isActiveInMonth } from '@/lib/occurrences'
+import { formatGBP } from '@/lib/format'
 
 export const Route = createFileRoute('/')({
   beforeLoad: ({ context, location }) => requireUnlocked(context, location),
   component: DashboardPage,
 })
-
-const gbp = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP',
-})
-const formatGBP = (pence: number) => gbp.format(pence / 100)
 
 function currentMonth(): string {
   const d = new Date()
@@ -101,8 +97,7 @@ function DashboardPage() {
 
   return (
     <div className="min-h-screen p-4 relative overflow-hidden">
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/20 rounded-full blur-[150px] pointer-events-none" />
+      <PageBackdrop />
 
       <div className="max-w-5xl mx-auto space-y-8 relative">
         <header className="flex items-center justify-between">

@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { PageBackdrop } from '@/components/PageBackdrop'
 import { OneOffForm } from '@/components/OneOffForm'
 import { RecurringForm } from '@/components/RecurringForm'
 import { cn } from '@/lib/utils'
@@ -20,6 +21,7 @@ import {
 } from '@/lib/flows'
 import { useKeystore } from '@/lib/keystore'
 import { requireUnlocked } from '@/lib/routeGuards'
+import { formatGBP } from '@/lib/format'
 
 export const Route = createFileRoute('/quick-add')({
   beforeLoad: ({ context, location }) => requireUnlocked(context, location),
@@ -27,12 +29,6 @@ export const Route = createFileRoute('/quick-add')({
 })
 
 type Kind = 'one-off' | 'recurring'
-
-const gbp = new Intl.NumberFormat('en-GB', {
-  style: 'currency',
-  currency: 'GBP',
-})
-const formatGBP = (pence: number) => gbp.format(pence / 100)
 
 function QuickAddPage() {
   const { dek } = useKeystore()
@@ -55,8 +51,7 @@ function QuickAddPage() {
 
   return (
     <main className="min-h-screen flex flex-col p-4 relative overflow-hidden">
-      <div className="fixed top-[-20%] left-[-10%] w-[60%] h-[40%] bg-primary/10 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[60%] h-[40%] bg-accent/20 rounded-full blur-[150px] pointer-events-none" />
+      <PageBackdrop />
 
       <header className="flex items-center justify-between mb-4 relative">
         <div className="text-sm text-muted-foreground">Quick add</div>
