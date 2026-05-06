@@ -19,6 +19,7 @@ import {
 import { DialogFooter } from '@/components/ui/dialog'
 import { DatePicker } from '@/components/DatePicker'
 import { type Category } from '@/lib/flows'
+import { todayISO } from '@/lib/format'
 import type { FormHandle } from '@/components/RecurringForm'
 
 export interface OneOffFormValues {
@@ -38,13 +39,6 @@ interface Props {
   submitLabel?: string
   cancelLabel?: string
   isLoading?: boolean
-}
-
-function todayISO(): string {
-  const d = new Date()
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(
-    d.getDate(),
-  ).padStart(2, '0')}`
 }
 
 export function OneOffForm({

@@ -18,6 +18,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { PageBackdrop } from '@/components/PageBackdrop'
 import {
   GoogleIcon,
   DiscordIcon,
@@ -86,8 +87,7 @@ function LoginPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center gap-6 p-4 relative overflow-hidden">
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/15 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/30 rounded-full blur-[150px] pointer-events-none" />
+      <PageBackdrop variant="auth" />
 
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />

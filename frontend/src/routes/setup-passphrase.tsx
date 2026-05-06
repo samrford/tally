@@ -13,6 +13,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { ThemeToggle } from '@/components/ThemeToggle'
+import { PageBackdrop } from '@/components/PageBackdrop'
 import { generateAndWrapDek } from '@/lib/crypto'
 import { postWrappedKey, useKeystore } from '@/lib/keystore'
 
@@ -62,8 +63,7 @@ function SetupPassphrasePage() {
 
   return (
     <main className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="fixed top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary/15 rounded-full blur-[150px] pointer-events-none" />
-      <div className="fixed bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent/30 rounded-full blur-[150px] pointer-events-none" />
+      <PageBackdrop variant="auth" />
 
       <div className="absolute top-4 right-4 z-10">
         <ThemeToggle />
